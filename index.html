@@ -1,0 +1,3442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aponjon Student Mess | Management Portal</title>
+    <!-- Complete Self-Contained Embedded CSS -->
+    <style>
+        /* =====================================================================
+           1. CSS VARIABLES & RESET
+        ===================================================================== */
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-subtle: #f1f5f9;
+            --bg-muted: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --brand-50: #eef2ff;
+            --brand-100: #e0e7ff;
+            --brand-500: #6366f1;
+            --brand-600: #4f46e5;
+            --brand-700: #4338ca;
+            --brand-900: #312e81;
+            --emerald-50: #ecfdf5;
+            --emerald-100: #d1fae5;
+            --emerald-600: #059669;
+            --emerald-700: #047857;
+            --rose-50: #fff1f2;
+            --rose-100: #ffe4e6;
+            --rose-600: #e11d48;
+            --rose-700: #be123c;
+            --amber-50: #fffbeb;
+            --amber-100: #fef3c7;
+            --amber-600: #d97706;
+            --amber-800: #92400e;
+            --sky-50: #f0f9ff;
+            --sky-100: #e0f2fe;
+            --sky-700: #0369a1;
+            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
+            --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.06);
+            --radius-md: 0.65rem;
+            --radius-lg: 0.9rem;
+            --radius-xl: 1.25rem;
+            --radius-2xl: 1.5rem;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans Bengali", sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* =====================================================================
+           2. INLINE SVG ICON HELPERS
+        ===================================================================== */
+        .icon {
+            width: 1.15rem;
+            height: 1.15rem;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .icon-lg {
+            width: 1.65rem;
+            height: 1.65rem;
+        }
+
+        .icon-sm {
+            width: 0.95rem;
+            height: 0.95rem;
+        }
+
+        /* =====================================================================
+           3. TOAST NOTIFICATION
+        ===================================================================== */
+        .toast {
+            position: fixed;
+            top: 1.25rem;
+            right: 1.25rem;
+            z-index: 100;
+            max-width: 24rem;
+            width: calc(100% - 2.5rem);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-xl);
+            border-radius: var(--radius-xl);
+            padding: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast-icon-wrap {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast-icon-wrap.success {
+            background: var(--emerald-100);
+            color: var(--emerald-600);
+        }
+
+        .toast-icon-wrap.error {
+            background: var(--rose-100);
+            color: var(--rose-600);
+        }
+
+        .toast-icon-wrap.info {
+            background: var(--brand-100);
+            color: var(--brand-600);
+        }
+
+        .toast-body {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .toast-msg {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-top: 0.15rem;
+        }
+
+        .toast-close {
+            color: var(--text-muted);
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+        }
+
+        .toast-close:hover {
+            background: var(--bg-subtle);
+            color: var(--text-primary);
+        }
+
+        /* =====================================================================
+           4. LOGIN GATE SCREEN
+        ===================================================================== */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.25rem;
+            position: relative;
+            background: radial-gradient(circle at top left, #e0e7ff 0%, transparent 45%),
+                radial-gradient(circle at bottom right, #fef3c7 0%, transparent 45%),
+                var(--bg-page);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 27rem;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-xl);
+            padding: 2rem;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-logo {
+            width: 3.5rem;
+            height: 3.5rem;
+            margin: 0 auto 1rem;
+            border-radius: var(--radius-xl);
+            background: linear-gradient(135deg, var(--brand-600), var(--brand-900));
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.35);
+        }
+
+        .login-kicker {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--brand-600);
+            margin-bottom: 0.25rem;
+        }
+
+        .login-title {
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .login-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.35rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 0.35rem;
+        }
+
+        .form-label-upper {
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon-left {
+            position: absolute;
+            left: 0.85rem;
+            color: var(--text-muted);
+            pointer-events: none;
+            display: flex;
+        }
+
+        .input-action-right {
+            position: absolute;
+            right: 0.75rem;
+            color: var(--text-muted);
+            padding: 0.25rem;
+            display: flex;
+        }
+
+        .input-action-right:hover {
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.65rem 0.9rem;
+            background: var(--bg-page);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+
+        .form-control.has-left-icon {
+            padding-left: 2.5rem;
+        }
+
+        .form-control.has-right-icon {
+            padding-right: 2.5rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            background: #fff;
+            border-color: var(--brand-500);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .error-text {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--rose-600);
+            margin-top: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            padding: 0.65rem 1rem;
+            border-radius: var(--radius-lg);
+            font-size: 0.825rem;
+            font-weight: 700;
+            transition: all 0.18s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 0.78rem 1rem;
+        }
+
+        .btn-primary {
+            background: var(--brand-600);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: var(--brand-700);
+        }
+
+        .btn-outline {
+            background: #fff;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-subtle);
+            color: var(--text-primary);
+        }
+
+        .btn-soft-brand {
+            background: var(--brand-50);
+            color: var(--brand-700);
+        }
+
+        .btn-soft-brand:hover {
+            background: var(--brand-100);
+        }
+
+        .btn-soft-danger {
+            background: var(--rose-50);
+            color: var(--rose-600);
+        }
+
+        .btn-soft-danger:hover {
+            background: var(--rose-600);
+            color: #fff;
+        }
+
+        .btn-subtle {
+            background: var(--bg-subtle);
+            color: var(--text-secondary);
+        }
+
+        .btn-subtle:hover {
+            background: var(--bg-muted);
+            color: var(--text-primary);
+        }
+
+        .hint-box {
+            margin-top: 1.35rem;
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-xl);
+            background: var(--amber-50);
+            border: 1px solid #fde68a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            font-size: 0.78rem;
+            color: var(--amber-800);
+        }
+
+        .hint-code {
+            background: #fff;
+            border: 1px solid #fde68a;
+            padding: 0.15rem 0.45rem;
+            border-radius: 0.4rem;
+            font-family: var(--font-mono);
+            font-weight: 800;
+            color: var(--brand-700);
+            margin-left: 0.25rem;
+        }
+
+        .link-btn {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--brand-600);
+            text-decoration: underline;
+        }
+
+        /* =====================================================================
+           5. STICKY TOP NAVBAR & LAYOUT CONTAINER
+        ===================================================================== */
+        .app-shell {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .container {
+            max-width: 82rem;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 4.25rem;
+            gap: 1rem;
+        }
+
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand-badge {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius-lg);
+            background: var(--brand-600);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .brand-name {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.15;
+            display: block;
+        }
+
+        .brand-tagline {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .nav-links {
+            display: none;
+            align-items: center;
+            gap: 0.25rem;
+            background: var(--bg-subtle);
+            padding: 0.25rem;
+            border-radius: var(--radius-lg);
+        }
+
+        @media (min-width: 1080px) {
+            .nav-links {
+                display: flex;
+            }
+        }
+
+        .nav-link {
+            padding: 0.4rem 0.7rem;
+            border-radius: 0.55rem;
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #fff;
+            color: var(--brand-600);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-pill {
+            display: none;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            background: var(--brand-50);
+            color: var(--brand-700);
+            border: 1px solid var(--brand-100);
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        @media (min-width: 640px) {
+            .user-pill {
+                display: inline-flex;
+            }
+        }
+
+        .mobile-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            overflow-x: auto;
+            padding: 0.6rem 0;
+            border-top: 1px solid var(--bg-subtle);
+        }
+
+        @media (min-width: 1080px) {
+            .mobile-nav {
+                display: none;
+            }
+        }
+
+        .mobile-nav-link {
+            flex-shrink: 0;
+            padding: 0.38rem 0.75rem;
+            border-radius: 0.55rem;
+            background: var(--bg-subtle);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .mobile-nav-link.active {
+            background: var(--brand-600);
+            color: #fff;
+        }
+
+        .main-content {
+            flex: 1;
+            padding-top: 2rem;
+            padding-bottom: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.75rem;
+        }
+
+        .section-anchor {
+            scroll-margin-top: 5.5rem;
+        }
+
+        /* =====================================================================
+           6. CARDS, HEADINGS & ABOUT / GALLERY SECTION
+        ===================================================================== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-pad {
+            padding: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .card-pad {
+                padding: 2rem;
+            }
+        }
+
+        .section-kicker {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--brand-600);
+        }
+
+        .section-title {
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-top: 0.15rem;
+        }
+
+        @media (min-width: 640px) {
+            .section-title {
+                font-size: 1.85rem;
+            }
+        }
+
+        .section-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .section-header-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-bottom: 1.25rem;
+        }
+
+        @media (min-width: 640px) {
+            .section-header-row {
+                flex-direction: row;
+                align-items: flex-end;
+                justify-content: space-between;
+            }
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            .about-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 999px;
+            background: var(--amber-50);
+            color: var(--amber-800);
+            border: 1px solid #fde68a;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .hero-title {
+            font-size: 1.85rem;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            margin: 0.75rem 0 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .hero-title {
+                font-size: 2.25rem;
+            }
+        }
+
+        .text-brand {
+            color: var(--brand-600);
+        }
+
+        .lang-box {
+            padding: 1rem 1.15rem;
+            border-radius: var(--radius-xl);
+            margin-bottom: 0.85rem;
+        }
+
+        .lang-box.en {
+            background: var(--bg-page);
+            border: 1px solid var(--border-color);
+        }
+
+        .lang-box.bn {
+            background: var(--amber-50);
+            border: 1px solid #fde68a;
+        }
+
+        .lang-tag {
+            display: block;
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.35rem;
+        }
+
+        .lang-box.en .lang-tag {
+            color: var(--brand-600);
+        }
+
+        .lang-box.bn .lang-tag {
+            color: var(--amber-800);
+        }
+
+        .lang-box p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        .gallery-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .gallery-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .photo-card {
+            position: relative;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            aspect-ratio: 3 / 2;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-color);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .photo-card:hover img {
+            transform: scale(1.04);
+        }
+
+        .photo-caption {
+            position: absolute;
+            inset: auto 0 0 0;
+            padding: 0.55rem 0.75rem;
+            background: linear-gradient(to top, rgba(15, 23, 42, 0.85), transparent);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.4rem;
+        }
+
+        .photo-del-btn {
+            background: rgba(225, 29, 72, 0.85);
+            color: #fff;
+            width: 1.4rem;
+            height: 1.4rem;
+            border-radius: 0.4rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        /* =====================================================================
+           7. FUNDING & EXPENSE SYSTEM
+        ===================================================================== */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        @media (min-width: 640px) {
+            .kpi-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-2xl);
+            padding: 1.25rem 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .kpi-card.highlight {
+            background: linear-gradient(135deg, var(--brand-600), var(--brand-900));
+            color: #fff;
+            border: none;
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.3);
+        }
+
+        .kpi-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .kpi-card.highlight .kpi-label {
+            color: var(--brand-100);
+        }
+
+        .kpi-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-top: 0.25rem;
+        }
+
+        .kpi-value.income {
+            color: var(--emerald-600);
+        }
+
+        .kpi-value.expense {
+            color: var(--rose-600);
+        }
+
+        .kpi-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .kpi-icon.income {
+            background: var(--emerald-50);
+            color: var(--emerald-600);
+        }
+
+        .kpi-icon.expense {
+            background: var(--rose-50);
+            color: var(--rose-600);
+        }
+
+        .kpi-icon.savings {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+        }
+
+        .member-strip {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-2xl);
+            padding: 1.15rem 1.35rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .member-strip-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.65rem;
+            margin-top: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .member-strip-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .member-strip-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        .member-mini-box {
+            padding: 0.7rem 0.85rem;
+            border-radius: var(--radius-xl);
+            background: var(--bg-page);
+            border: 1px solid var(--bg-subtle);
+        }
+
+        .member-mini-name {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--text-muted);
+        }
+
+        .member-mini-amt {
+            display: block;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-top: 0.15rem;
+        }
+
+        .ledger-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        @media (min-width: 1024px) {
+            .ledger-layout {
+                grid-template-columns: 4fr 8fr;
+            }
+        }
+
+        .savings-preview-box {
+            padding: 0.9rem 1rem;
+            border-radius: var(--radius-xl);
+            background: var(--brand-50);
+            border: 1px solid var(--brand-100);
+            margin-bottom: 1rem;
+        }
+
+        .savings-preview-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--brand-900);
+        }
+
+        .savings-preview-val {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--brand-700);
+            margin-top: 0.2rem;
+        }
+
+        /* =====================================================================
+           8. TABLES (LEDGER, BILLS, WORK ROUTINE & MEAL ROUTINE)
+        ===================================================================== */
+        .table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .table-card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--bg-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 640px) {
+            .table-card-header {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: var(--bg-page);
+            padding: 0.75rem 0.85rem;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 0.75rem 0.85rem;
+            font-size: 0.83rem;
+            border-bottom: 1px solid var(--bg-subtle);
+            color: var(--text-primary);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(248, 250, 252, 0.85);
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .nowrap {
+            white-space: nowrap;
+        }
+
+        .badge-name {
+            display: inline-block;
+            padding: 0.22rem 0.6rem;
+            border-radius: 0.5rem;
+            background: var(--brand-50);
+            color: var(--brand-700);
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .amt-inc {
+            color: var(--emerald-600);
+            font-weight: 700;
+        }
+
+        .amt-exp {
+            color: var(--rose-600);
+            font-weight: 700;
+        }
+
+        .amt-sav {
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .amt-neg {
+            color: var(--rose-600);
+        }
+
+        /* =====================================================================
+           9. CURRENT BILL CALCULATOR & ROOM RENT / DEPOSIT TRACKER
+        ===================================================================== */
+        .bills-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        @media (min-width: 1024px) {
+            .bills-layout {
+                grid-template-columns: 5fr 7fr;
+            }
+        }
+
+        .unit-inputs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .calc-breakdown {
+            background: var(--bg-page);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .calc-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.55rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+
+        .calc-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .calc-row:first-child {
+            padding-top: 0;
+        }
+
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .btn-row .btn {
+            flex: 1;
+        }
+
+        .rent-config-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.6rem;
+            padding: 0 1.5rem 1.25rem;
+            border-bottom: 1px solid var(--bg-subtle);
+        }
+
+        @media (min-width: 640px) {
+            .rent-config-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .config-pill {
+            padding: 0.55rem 0.75rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .config-pill.amber {
+            background: var(--amber-50);
+            color: var(--amber-800);
+            border: 1px solid #fde68a;
+        }
+
+        .config-pill.brand {
+            background: var(--brand-50);
+            color: var(--brand-900);
+            border: 1px solid var(--brand-100);
+        }
+
+        .config-pill.emerald {
+            background: var(--emerald-50);
+            color: var(--emerald-700);
+            border: 1px solid var(--emerald-100);
+        }
+
+        .mini-num-input {
+            width: 4.5rem;
+            padding: 0.25rem 0.45rem;
+            border-radius: 0.45rem;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-align: right;
+        }
+
+        .status-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 0.65rem;
+            font-size: 0.74rem;
+            font-weight: 800;
+            transition: transform 0.15s;
+        }
+
+        .status-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .status-toggle.paid {
+            background: var(--emerald-50);
+            color: var(--emerald-700);
+            border: 1px solid #a7f3d0;
+        }
+
+        .status-toggle.unpaid {
+            background: var(--rose-50);
+            color: var(--rose-700);
+            border: 1px solid #fecdd3;
+        }
+
+        .summary-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .summary-pill {
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+        /* =====================================================================
+           10. 7-DAY WORK ROUTINE TABLE & PUMP CHAIN
+        ===================================================================== */
+        .work-table th,
+        .work-table td {
+            border: 1px solid var(--border-color);
+            text-align: center;
+            padding: 0.65rem 0.55rem;
+            font-size: 0.78rem;
+        }
+
+        .work-group-header-morning {
+            background: #e0e7ff !important;
+            color: #312e81 !important;
+            font-size: 0.74rem;
+        }
+
+        .work-group-header-night {
+            background: #fef3c7 !important;
+            color: #92400e !important;
+            font-size: 0.74rem;
+        }
+
+        .work-day-cell {
+            background: #dcfce7;
+            color: #166534;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .work-cook-cell {
+            background: #ffedd5;
+            color: #9a3412;
+            font-weight: 700;
+        }
+
+        .work-market-active {
+            background: #fef9c3;
+            color: #854d0e;
+            font-weight: 800;
+        }
+
+        .work-pump-cell {
+            background: #f8fafc;
+            font-weight: 800;
+            color: var(--brand-900);
+            line-height: 1.75;
+            vertical-align: middle;
+        }
+
+        .duty-highlight {
+            background: var(--brand-600) !important;
+            color: #ffffff !important;
+            box-shadow: inset 0 0 0 2px #312e81;
+        }
+
+        .duty-dimmed {
+            opacity: 0.42;
+        }
+
+        .pump-banner {
+            padding: 0.85rem 1.25rem;
+            background: var(--brand-50);
+            border-top: 1px solid var(--brand-100);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.6rem;
+            font-size: 0.8rem;
+            color: var(--brand-900);
+        }
+
+        .pump-chain-pills {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.35rem;
+            font-weight: 800;
+        }
+
+        .pump-pill {
+            padding: 0.2rem 0.55rem;
+            border-radius: 0.45rem;
+            background: #fff;
+            border: 1px solid var(--brand-100);
+            color: var(--brand-700);
+            font-size: 0.74rem;
+        }
+
+        .work-edit-input {
+            width: 100%;
+            min-width: 5.5rem;
+            padding: 0.3rem 0.4rem;
+            border-radius: 0.4rem;
+            border: 1px solid var(--brand-500);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-align: center;
+            background: #fff;
+        }
+
+        /* =====================================================================
+           11. SUNDAY-SATURDAY MEAL ROUTINE
+        ===================================================================== */
+        .meal-day-bn {
+            display: block;
+            font-weight: 800;
+            color: var(--emerald-700);
+            font-size: 0.88rem;
+        }
+
+        .meal-day-en {
+            display: block;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .morning-special-tag {
+            display: inline-block;
+            margin-top: 0.25rem;
+            padding: 0.18rem 0.55rem;
+            border-radius: 0.45rem;
+            background: var(--amber-100);
+            color: var(--amber-800);
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        /* =====================================================================
+           12. 6 BOARDERS' PROFILES GRID
+        ===================================================================== */
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+
+        @media (min-width: 640px) {
+            .profiles-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .profiles-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .profile-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-2xl);
+            padding: 1.4rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: box-shadow 0.2s;
+        }
+
+        .profile-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .profile-top {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+        }
+
+        .avatar-box {
+            position: relative;
+            width: 4rem;
+            height: 4rem;
+            flex-shrink: 0;
+        }
+
+        .avatar-box img {
+            width: 4rem;
+            height: 4rem;
+            border-radius: var(--radius-xl);
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .avatar-cam-btn {
+            position: absolute;
+            bottom: -0.35rem;
+            right: -0.35rem;
+            width: 1.65rem;
+            height: 1.65rem;
+            border-radius: 0.55rem;
+            background: #fff;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .avatar-cam-btn:hover {
+            color: var(--brand-600);
+        }
+
+        .boarder-tag {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 0.4rem;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: var(--brand-50);
+            color: var(--brand-700);
+            margin-bottom: 0.2rem;
+        }
+
+        .profile-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .profile-role {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .profile-bio {
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+            margin: 1rem 0;
+        }
+
+        .profile-links {
+            border-top: 1px solid var(--bg-subtle);
+            padding-top: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            font-size: 0.76rem;
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+        }
+
+        .contact-row.wa {
+            background: var(--emerald-50);
+            color: var(--emerald-700);
+        }
+
+        .contact-row.wa:hover {
+            background: var(--emerald-100);
+        }
+
+        .contact-row.gpay {
+            background: var(--sky-50);
+            color: var(--sky-700);
+            border: 1px solid var(--sky-100);
+        }
+
+        .gpay-badge {
+            background: #fff;
+            border: 1px solid var(--sky-100);
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.35rem;
+            font-size: 0.65rem;
+            font-weight: 800;
+            margin-right: 0.4rem;
+        }
+
+        .gpay-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .icon-chip-btn {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.3rem 0.45rem;
+            border-radius: 0.45rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-chip-btn:hover {
+            background: var(--brand-600);
+            color: #fff;
+            border-color: var(--brand-600);
+        }
+
+        .social-pair {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.45rem;
+        }
+
+        .social-chip {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.48rem 0.65rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .social-chip.ig {
+            background: #fdf2f8;
+            color: #9d174d;
+        }
+
+        .social-chip.fb {
+            background: #eff6ff;
+            color: #1e40af;
+        }
+
+        /* =====================================================================
+           13. FOOTER & MODALS
+        ===================================================================== */
+        .footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .footer-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        @media (min-width: 640px) {
+            .footer-inner {
+                flex-direction: row;
+                text-align: left;
+            }
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 90;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-2xl);
+            max-width: 24rem;
+            width: 100%;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .modal-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.85rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 1.15rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =====================================================================
+         TOAST NOTIFICATION BANNER
+    ====================================================================== -->
+    <div id="toast" role="alert" class="toast">
+        <div id="toast-icon-wrap" class="toast-icon-wrap success">
+            <svg class="icon" viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+        <div class="toast-body">
+            <div id="toast-title" class="toast-title">Success</div>
+            <div id="toast-message" class="toast-msg">Action completed.</div>
+        </div>
+        <button type="button" onclick="hideToast()" class="toast-close" aria-label="Close notification">
+            <svg class="icon icon-sm" viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- =====================================================================
+         1. PASSWORD-PROTECTED LOGIN GATE
+    ====================================================================== -->
+    <section id="login-screen" class="login-screen">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">
+                    <svg class="icon icon-lg" viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </div>
+                <span class="login-kicker">Members Only Portal</span>
+                <h1 class="login-title">Aponjon Student Mess</h1>
+                <p class="login-subtitle">Enter the secret mess password to unlock funds, bills, routines &amp;
+                    profiles.</p>
+            </div>
+
+            <form id="mess-login-form" novalidate>
+                <div class="form-group">
+                    <label for="login-member" class="form-label form-label-upper">Select Your Name</label>
+                    <div class="input-wrap">
+                        <span class="input-icon-left">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </span>
+                        <select id="login-member" class="form-control has-left-icon">
+                            <option value="SUTAP">SUTAP</option>
+                            <option value="JUBORAJ">JUBORAJ</option>
+                            <option value="ARIJIT">ARIJIT</option>
+                            <option value="PULAK">PULAK</option>
+                            <option value="SUBHADIP">SUBHADIP</option>
+                            <option value="SAGAR">SAGAR</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="mess-password" class="form-label form-label-upper">Mess Access Password</label>
+                    <div class="input-wrap">
+                        <span class="input-icon-left">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </span>
+                        <input type="password" id="mess-password" placeholder="Enter mess password"
+                            class="form-control has-left-icon has-right-icon">
+                        <button type="button" id="toggle-login-pass" aria-label="Show password"
+                            class="input-action-right">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                    <p id="login-error" class="error-text hidden">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <span>Incorrect mess password! Only authorized boarders can enter.</span>
+                    </p>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+                    </svg>
+                    <span>Unlock Mess Portal</span>
+                </button>
+            </form>
+
+            <div class="hint-box">
+                <div>
+                    <strong>Default Password:</strong>
+                    <code id="hint-password-display" class="hint-code">  </code>
+                </div>
+                <button type="button" id="autofill-login-btn" class="link-btn">Auto-Fill</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         MAIN PROTECTED PORTAL
+    ====================================================================== -->
+    <div id="portal-app" class="app-shell hidden">
+
+        <!-- Sticky Top Navigation Bar -->
+        <header class="navbar">
+            <div class="container">
+                <div class="nav-inner">
+                    <div class="brand-wrap">
+                        <div class="brand-badge">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="brand-name">Aponjon Student Mess</span>
+                            <span class="brand-tagline">Home Away From Home • Est. 2023</span>
+                        </div>
+                    </div>
+
+                    <nav class="nav-links">
+                        <a href="#about-gallery" class="nav-link">About &amp; Photos</a>
+                        <a href="#funding-system" class="nav-link active">Funding System</a>
+                        <a href="#bills-rent-tracker" class="nav-link">Bills &amp; Rent</a>
+                        <a href="#work-routine" class="nav-link">Work Routine</a>
+                        <a href="#meal-routine" class="nav-link">Lunch &amp; Dinner</a>
+                        <a href="#boarders-profiles" class="nav-link">Boarders (6)</a>
+                    </nav>
+
+                    <div class="nav-actions">
+                        <span class="user-pill">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <polyline points="17 11 19 13 23 9"></polyline>
+                            </svg>
+                            <span id="active-member-badge">SUTAP</span>
+                        </span>
+                        <button type="button" id="open-pass-modal-btn" title="Change Mess Password"
+                            class="btn btn-subtle">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                <path
+                                    d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4">
+                                </path>
+                            </svg>
+                        </button>
+                        <button type="button" id="logout-btn" class="btn btn-soft-danger">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>Logout</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Quick Jump Bar -->
+                <div class="mobile-nav">
+                    <a href="#about-gallery" class="mobile-nav-link">About &amp; Photos</a>
+                    <a href="#funding-system" class="mobile-nav-link active">Funding</a>
+                    <a href="#bills-rent-tracker" class="mobile-nav-link">Bills &amp; Rent</a>
+                    <a href="#work-routine" class="mobile-nav-link">Work Routine</a>
+                    <a href="#meal-routine" class="mobile-nav-link">Meal Menu</a>
+                    <a href="#boarders-profiles" class="mobile-nav-link">6 Profiles</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="container main-content">
+
+            <!-- =================================================================
+                 2. MESS NAME, BILINGUAL ABOUT (EN + BN) & PHOTO GALLERY
+            ================================================================== -->
+            <section id="about-gallery" class="section-anchor card card-pad">
+                <div class="about-grid">
+                    <div>
+                        <span class="pill-badge">Brotherhood • Homely Food • আপনজন ছাত্রাবাস</span>
+                        <h2 class="hero-title">Welcome to <span class="text-brand">Aponjon Student Mess</span></h2>
+
+                        <div class="lang-box en">
+                            <span class="lang-tag">About Us (English)</span>
+                            <p>
+                                More than just a place to stay, <strong>Aponjon Student Mess</strong> is a close-knit
+                                family of six dedicated students living, studying, and growing together far from home.
+                                Built on mutual respect, shared responsibilities, and transparent mess management, we
+                                enjoy healthy home-cooked meals, supportive friendship, and unforgettable memories every
+                                single day.
+                            </p>
+                        </div>
+
+                        <div class="lang-box bn">
+                            <span class="lang-tag">আমাদের মেস সম্পর্কে (বাংলা)</span>
+                            <p>
+                                <strong>আপনজন স্টুডেন্ট মেস</strong> শুধু থাকার জায়গা নয়, এটি বাড়ি থেকে দূরে থাকা ছয়জন
+                                ছাত্রের এক ভালোবাসার পরিবার। পারস্পরিক শ্রদ্ধা, বন্ধুত্ব, স্বচ্ছ হিসাব-নিকাশ এবং ঘরোয়া
+                                পরিবেশে স্বাস্থ্যকর খাবারের মাধ্যমে আমরা এখানে একসাথে পড়াশোনা ও সুন্দর সময় কাটাই।
+                                প্রতিদিনের আড্ডা, একসাথে খাওয়া-দাওয়া আর বিপদে-আপদে পাশে থাকার মধ্য দিয়েই আমাদের এই মেস
+                                হয়ে উঠেছে এক টুকরো আপন ঘর।
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="gallery-header">
+                            <h3 class="gallery-title">
+                                <svg class="icon icon-sm text-brand" viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                <span>Mess Photo Gallery</span>
+                            </h3>
+                            <label class="btn btn-soft-brand" style="cursor:pointer;">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>Add Photo</span>
+                                <input type="file" id="gallery-upload-input" accept="image/*" class="hidden">
+                            </label>
+                        </div>
+                        <div id="mess-photo-grid" class="photo-grid"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================================
+                 3. FUNDING & EXPENSE MANAGEMENT SYSTEM (6 OPTIONS)
+            ================================================================== -->
+            <section id="funding-system" class="section-anchor">
+                <div class="section-header-row">
+                    <div>
+                        <span class="section-kicker">Central Mess Treasury</span>
+                        <h2 class="section-title">Funding &amp; Expense Ledger</h2>
+                        <p class="section-subtitle">Auto-calculating running balance: <strong>Savings = Previous Savings
+                                + Income - Expense</strong></p>
+                    </div>
+                    <div class="btn-row" style="flex:none;">
+                        <button type="button" id="export-csv-btn" class="btn btn-outline">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>Export CSV</span>
+                        </button>
+                        <button type="button" id="reset-demo-funds-btn" class="btn btn-outline">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                <polyline points="1 4 1 10 7 10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                            <span>Reset Sample</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI Summary Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div>
+                            <div class="kpi-label">Total Income Deposited</div>
+                            <div id="kpi-total-income" class="kpi-value income">₹0</div>
+                        </div>
+                        <div class="kpi-icon income">
+                            <svg class="icon icon-lg" viewBox="0 0 24 24">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                <polyline points="17 6 23 6 23 12"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div>
+                            <div class="kpi-label">Total Bazar &amp; Expenses</div>
+                            <div id="kpi-total-expense" class="kpi-value expense">₹0</div>
+                        </div>
+                        <div class="kpi-icon expense">
+                            <svg class="icon icon-lg" viewBox="0 0 24 24">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card highlight">
+                        <div>
+                            <div class="kpi-label">Current Net Savings</div>
+                            <div id="kpi-current-savings" class="kpi-value">₹0</div>
+                        </div>
+                        <div class="kpi-icon savings">
+                            <svg class="icon icon-lg" viewBox="0 0 24 24">
+                                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                                <line x1="2" y1="10" x2="22" y2="10"></line>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Individual Member Deposit Summary -->
+                <div class="member-strip">
+                    <div class="gallery-title">
+                        <span>Individual Deposit Summary (Total Income per Boarder)</span>
+                    </div>
+                    <div id="member-contribution-grid" class="member-strip-grid"></div>
+                </div>
+
+                <!-- Entry Form + Transaction Table -->
+                <div class="ledger-layout">
+                    <div class="card card-pad">
+                        <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:0.25rem;">Add Fund / Expense Entry
+                        </h3>
+                        <p style="font-size:0.78rem;color:var(--text-muted);margin-bottom:1.15rem;">All 6 fields update
+                            mess savings automatically.</p>
+
+                        <form id="fund-entry-form" novalidate>
+                            <div class="form-group">
+                                <label for="fund-date" class="form-label">
+                                    <span>i. Date (Auto-Updated)</span>
+                                    <span style="color:var(--brand-600);font-weight:600;">Today</span>
+                                </label>
+                                <input type="date" id="fund-date" required class="form-control">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fund-name" class="form-label">ii. Member Name (6 Boarders)</label>
+                                <select id="fund-name" required class="form-control">
+                                    <option value="SUTAP">SUTAP</option>
+                                    <option value="JUBORAJ">JUBORAJ</option>
+                                    <option value="ARIJIT">ARIJIT</option>
+                                    <option value="PULAK">PULAK</option>
+                                    <option value="SUBHADIP">SUBHADIP</option>
+                                    <option value="SAGAR">SAGAR</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fund-income" class="form-label">
+                                    <span>iii. Income / Deposit (₹)</span>
+                                    <span style="color:var(--text-muted);font-weight:500;">Digits only</span>
+                                </label>
+                                <input type="text" inputmode="numeric" id="fund-income" value="0"
+                                    class="digit-only-input form-control"
+                                    style="color:var(--emerald-700);font-weight:700;">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fund-expense" class="form-label">
+                                    <span>iv. Expense Amount (₹)</span>
+                                    <span style="color:var(--text-muted);font-weight:500;">Digits only</span>
+                                </label>
+                                <input type="text" inputmode="numeric" id="fund-expense" value="0"
+                                    class="digit-only-input form-control"
+                                    style="color:var(--rose-700);font-weight:700;">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fund-cause" class="form-label">
+                                    <span>v. Cause of Expense / Note</span>
+                                    <span id="cause-requirement-badge"
+                                        style="color:var(--emerald-600);font-weight:700;">Optional for Income</span>
+                                </label>
+                                <input type="text" id="fund-cause"
+                                    placeholder="Optional for deposit; required for expense" class="form-control">
+                            </div>
+
+                            <div class="savings-preview-box">
+                                <div class="savings-preview-top">
+                                    <span>vi. New Savings (Auto-Update)</span>
+                                    <span style="font-family:var(--font-mono);font-size:0.68rem;">Prev + Inc -
+                                        Exp</span>
+                                </div>
+                                <div id="live-savings-preview" class="savings-preview-val">₹0</div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <span>Record Transaction</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="table-card">
+                        <div class="table-card-header">
+                            <div>
+                                <h3 style="font-size:1.05rem;font-weight:800;">Transaction &amp; Savings Ledger</h3>
+                                <p style="font-size:0.76rem;color:var(--text-muted);">Running balance updates
+                                    automatically on every entry.</p>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:0.5rem;">
+                                <label for="filter-member"
+                                    style="font-size:0.75rem;font-weight:700;color:var(--text-muted);">Filter:</label>
+                                <select id="filter-member" class="form-control"
+                                    style="width:auto;padding:0.4rem 0.7rem;font-size:0.78rem;">
+                                    <option value="ALL">All Members</option>
+                                    <option value="SUTAP">SUTAP</option>
+                                    <option value="JUBORAJ">JUBORAJ</option>
+                                    <option value="ARIJIT">ARIJIT</option>
+                                    <option value="PULAK">PULAK</option>
+                                    <option value="SUBHADIP">SUBHADIP</option>
+                                    <option value="SAGAR">SAGAR</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>i. Date</th>
+                                        <th>ii. Name</th>
+                                        <th class="text-right">iii. Income</th>
+                                        <th class="text-right">iv. Expense</th>
+                                        <th>v. Cause of Expense</th>
+                                        <th class="text-right">vi. Savings</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ledger-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================================
+                 4. CURRENT BILL CALCULATOR, ROOM RENT & DEPOSIT TRACKER
+            ================================================================== -->
+            <section id="bills-rent-tracker" class="section-anchor">
+                <div class="section-header-row">
+                    <div>
+                        <span class="section-kicker">Monthly Utilities &amp; Dues</span>
+                        <h2 class="section-title">Current Bill, Room Rent &amp; Deposit Tracker</h2>
+                        <p class="section-subtitle">Auto-calculates <strong>Total Unit = Present - Previous</strong>,
+                            <strong>Total Bill = Total Unit × ₹10</strong>, and <strong>Per Head = Total Bill ÷
+                                6</strong>.</p>
+                    </div>
+                </div>
+
+                <div class="bills-layout">
+                    <!-- Current Bill Calculator -->
+                    <div class="card card-pad">
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <div>
+                                <span
+                                    style="font-size:0.68rem;font-weight:800;text-transform:uppercase;color:var(--amber-600);">Meter
+                                    Split</span>
+                                <h3 style="font-size:1.1rem;font-weight:800;margin-top:0.15rem;">Current Bill Calculator
+                                </h3>
+                            </div>
+                            <span class="pill-badge">₹10 / Unit</span>
+                        </div>
+
+                        <div class="unit-inputs-grid">
+                            <div>
+                                <label for="prev-unit-input" class="form-label">Previous Unit</label>
+                                <input type="number" step="any" min="0" id="prev-unit-input" class="form-control"
+                                    style="font-weight:800;">
+                            </div>
+                            <div>
+                                <label for="pres-unit-input" class="form-label">Present Unit</label>
+                                <input type="number" step="any" min="0" id="pres-unit-input" class="form-control"
+                                    style="font-weight:800;">
+                            </div>
+                        </div>
+
+                        <div class="calc-breakdown">
+                            <div class="calc-row">
+                                <span style="color:var(--text-secondary);">Total Unit <small>(Present -
+                                        Previous)</small></span>
+                                <strong id="calc-total-unit">0 Units</strong>
+                            </div>
+                            <div class="calc-row">
+                                <span style="color:var(--text-secondary);">Total Bill <small>(Total Unit ×
+                                        10)</small></span>
+                                <strong id="calc-total-bill" style="color:var(--amber-600);">₹0.00</strong>
+                            </div>
+                            <div class="calc-row">
+                                <span style="font-weight:800;color:var(--brand-700);">Per Head Bill <small>(Total ÷
+                                        6)</small></span>
+                                <strong id="calc-per-head-bill"
+                                    style="font-size:1.25rem;color:var(--brand-600);">₹0.00</strong>
+                            </div>
+                        </div>
+
+                        <div class="btn-row">
+                            <button type="button" id="save-meter-reading-btn" class="btn btn-primary">Save Meter
+                                Reading</button>
+                            <button type="button" id="rollover-meter-btn" class="btn btn-subtle">Next Month
+                                Rollover</button>
+                        </div>
+                    </div>
+
+                    <!-- Paid / Not Paid Tracker -->
+                    <div class="table-card">
+                        <div class="table-card-header">
+                            <div>
+                                <h3 style="font-size:1.05rem;font-weight:800;">Monthly Member Payment Status (Paid / Not
+                                    Paid)</h3>
+                                <p style="font-size:0.76rem;color:var(--text-muted);">Monthly hisab for Current Bill
+                                    &amp; Room Rent per selected month; click any badge to toggle.</p>
+                            </div>
+                            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.65rem;">
+                                <div style="display:flex;align-items:center;gap:0.4rem;">
+                                    <label for="billing-month-select"
+                                        style="font-size:0.75rem;font-weight:800;color:var(--brand-700);">Month:</label>
+                                    <input type="month" id="billing-month-select" class="form-control"
+                                        style="width:auto;padding:0.35rem 0.65rem;font-size:0.78rem;font-weight:800;">
+                                </div>
+                                <div id="payment-summary-pills" class="summary-pills"></div>
+                            </div>
+                        </div>
+
+                        <div class="rent-config-grid" style="padding-top:1rem;">
+                            <div class="config-pill amber">
+                                <span>Current / Head (<span id="active-bill-month-label">2026-11</span>):</span>
+                                <strong id="badge-per-head-current">₹0.00</strong>
+                            </div>
+                            <div class="config-pill brand">
+                                <label for="rent-amount-input">Monthly Room Rent (₹):</label>
+                                <input type="number" min="0" id="rent-amount-input" class="mini-num-input">
+                            </div>
+                            <div class="config-pill emerald">
+                                <label for="deposit-amount-input">Deposit (₹):</label>
+                                <input type="number" min="0" id="deposit-amount-input" class="mini-num-input">
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Boarder Name</th>
+                                        <th class="text-center">Current Bill (<span
+                                                class="month-col-tag">2026-11</span>)</th>
+                                        <th class="text-center">Room Rent (<span class="month-col-tag">2026-11</span>)
+                                        </th>
+                                        <th class="text-center">Deposit</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payment-status-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================================
+                 5. 7-DAY WORK ROUTINE (MORNING, NIGHT, WATER, MARKET & PUMP)
+            ================================================================== -->
+            <section id="work-routine" class="section-anchor">
+                <div class="section-header-row">
+                    <div>
+                        <span class="section-kicker">Shared Mess Responsibilities</span>
+                        <h2 class="section-title">Weekly Working Routine (Sunday – Saturday)</h2>
+                        <p class="section-subtitle">Morning &amp; Night Cut / Cook / Clean, Water, Market days, and Pump
+                            rotation order.</p>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem;">
+                        <select id="highlight-work-member" class="form-control"
+                            style="width:auto;padding:0.45rem 0.75rem;font-size:0.78rem;font-weight:700;">
+                            <option value="NONE">Highlight Member: All</option>
+                            <option value="SUTAP">Highlight: SUTAP</option>
+                            <option value="JUBORAJ">Highlight: JUBORAJ</option>
+                            <option value="ARIJIT">Highlight: ARIJIT</option>
+                            <option value="PULAK">Highlight: PULAK</option>
+                            <option value="SUBHADIP">Highlight: SUBHADIP</option>
+                            <option value="SAGAR">Highlight: SAGAR</option>
+                        </select>
+                        <button type="button" id="toggle-edit-work-btn" class="btn btn-outline">
+                            <svg class="icon icon-sm" viewBox="0 0 24 24">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            <span id="edit-work-btn-text">Edit Work Routine</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-responsive">
+                        <table class="work-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="background:#e2e8f0;color:#0f172a;">DAY</th>
+                                    <th colspan="3" class="work-group-header-morning">MORNING</th>
+                                    <th colspan="3" class="work-group-header-night">NIGHT</th>
+                                    <th rowspan="2" style="background:#e0f2fe;color:#0369a1;">WATER</th>
+                                    <th rowspan="2" style="background:#fef9c3;color:#854d0e;">MARKET</th>
+                                    <th rowspan="2" style="background:#eef2ff;color:#312e81;">PUMP ROTATION</th>
+                                </tr>
+                                <tr>
+                                    <th class="work-group-header-morning">CUT</th>
+                                    <th class="work-group-header-morning">COOK</th>
+                                    <th class="work-group-header-morning">CLEAN</th>
+                                    <th class="work-group-header-night">CUT</th>
+                                    <th class="work-group-header-night">COOK</th>
+                                    <th class="work-group-header-night">CLEAN</th>
+                                </tr>
+                            </thead>
+                            <tbody id="work-routine-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div class="pump-banner">
+                        <span style="font-weight:800;">💧 Pump Turn Sequence:</span>
+                        <div class="pump-chain-pills">
+                            <span class="pump-pill">SUTAP</span>
+                            <span>&lt;</span>
+                            <span class="pump-pill">JUBARAJ</span>
+                            <span>&lt;</span>
+                            <span class="pump-pill">SAGAR</span>
+                            <span>&lt;</span>
+                            <span class="pump-pill">PULAK</span>
+                            <span>&lt;</span>
+                            <span class="pump-pill">SUBHADIP</span>
+                            <span>&lt;</span>
+                            <span class="pump-pill">ARIJIT</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================================
+                 6. WEEKLY LUNCH & DINNER ROUTINE (SUNDAY – SATURDAY)
+            ================================================================== -->
+            <section id="meal-routine" class="section-anchor table-card">
+                <div class="table-card-header">
+                    <div>
+                        <span class="section-kicker" style="color:var(--emerald-600);">Homely Bengali Kitchen •
+                            সাপ্তাহিক খাবারের রুটিন</span>
+                        <h2 style="font-size:1.3rem;font-weight:800;margin-top:0.15rem;">Weekly Meal Routine (Morning,
+                            Lunch &amp; Dinner)</h2>
+                    </div>
+                    <button type="button" id="toggle-edit-menu-btn" class="btn btn-subtle">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        <span id="edit-menu-btn-text">Edit Menu</span>
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>বার / Day</th>
+                                <th>সকাল (Morning Special)</th>
+                                <th>দুপুর (Lunch)</th>
+                                <th>রাত (Dinner)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="meal-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- =================================================================
+                 7. 6 BOARDERS' PROFILES (WITH GPAY COPY & EDIT)
+            ================================================================== -->
+            <section id="boarders-profiles" class="section-anchor">
+                <div class="section-header-row">
+                    <div>
+                        <span class="section-kicker">Our Brotherhood</span>
+                        <h2 class="section-title">Mess Members &amp; Profiles</h2>
+                        <p class="section-subtitle">Connect via WhatsApp, Instagram, Facebook, or copy GPay ID/number
+                            for instant mess payments.</p>
+                    </div>
+                </div>
+                <div id="profiles-grid" class="profiles-grid"></div>
+            </section>
+
+        </main>
+
+        <footer class="footer">
+            <div class="container footer-inner">
+                <p style="font-weight:700;color:var(--text-primary);">Aponjon Student Mess • Managed by Sutap, Juboraj,
+                    Arijit, Pulak, Subhadip &amp; Sagar</p>
+                <p>Data is saved locally in your browser for instant offline access.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 1: CHANGE MESS PASSWORD
+    ====================================================================== -->
+    <div id="pass-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+        <div class="modal-box">
+            <div class="modal-top">
+                <h3 style="font-size:1.05rem;font-weight:800;">Change Mess Password</h3>
+                <button type="button" id="close-pass-modal" class="toast-close">✕</button>
+            </div>
+            <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.85rem;">Update the shared secret
+                password required to unlock this mess portal.</p>
+            <form id="change-pass-form">
+                <div class="form-group">
+                    <label for="new-mess-password" class="form-label">New Password (min 4 chars)</label>
+                    <input type="text" id="new-mess-password" required placeholder="Enter new password"
+                        class="form-control">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="cancel-pass-modal" class="btn btn-subtle">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 2: EDIT MEMBER GPAY & PROFILE DETAILS
+    ====================================================================== -->
+    <div id="gpay-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+        <div class="modal-box">
+            <div class="modal-top">
+                <h3 style="font-size:1.05rem;font-weight:800;">Edit Member Details</h3>
+                <button type="button" id="close-gpay-modal" class="toast-close">✕</button>
+            </div>
+            <p id="gpay-modal-subtitle" style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.85rem;">
+                Update Google Pay UPI ID, WhatsApp, or Bio.</p>
+            <form id="edit-gpay-form">
+                <input type="hidden" id="gpay-member-index">
+                <div class="form-group">
+                    <label for="gpay-value-input" class="form-label">GPay UPI ID or Phone Number</label>
+                    <input type="text" id="gpay-value-input" required placeholder="e.g., sutap@okaxis or 9876543210"
+                        class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="profile-wa-input" class="form-label">WhatsApp Number (with 91)</label>
+                    <input type="text" id="profile-wa-input" required placeholder="e.g., 919876543210"
+                        class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="profile-bio-input" class="form-label">Short Bio</label>
+                    <input type="text" id="profile-bio-input" required class="form-control">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="cancel-gpay-modal" class="btn btn-subtle">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         JAVASCRIPT APPLICATION LOGIC
+    ====================================================================== -->
+    <script>
+        const STORAGE_KEYS = {
+            PASSWORD: 'aponjon_mess_password_v1',
+            TRANSACTIONS: 'aponjon_mess_transactions_v1',
+            MEALS: 'aponjon_mess_meals_v3',
+            WORK_ROUTINE: 'aponjon_mess_work_v2',
+            PHOTOS: 'aponjon_mess_photos_v2',
+            PROFILES: 'aponjon_mess_profiles_v2',
+            BILLS_RENT: 'aponjon_mess_bills_rent_v1'
+        };
+
+        const MEMBERS = ['SUTAP', 'JUBORAJ', 'ARIJIT', 'PULAK', 'SUBHADIP', 'SAGAR'];
+
+        // Self-contained SVG data-URI gallery illustrations
+        function createSvgCard(bg1, bg2, title, subtitle) {
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+                <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${bg1}"/><stop offset="100%" stop-color="${bg2}"/></linearGradient></defs>
+                <rect width="600" height="400" fill="url(#g)"/>
+                <circle cx="500" cy="80" r="90" fill="rgba(255,255,255,0.12)"/>
+                <circle cx="90" cy="340" r="110" fill="rgba(255,255,255,0.08)"/>
+                <text x="50%" y="48%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="30" font-weight="800">${title}</text>
+                <text x="50%" y="60%" dominant-baseline="middle" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-family="sans-serif" font-size="16" font-weight="600">${subtitle}</text>
+            </svg>`;
+            return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+        }
+
+        function createAvatarSvg(bg, fg, name) {
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+                <rect width="200" height="200" fill="${bg}"/>
+                <circle cx="100" cy="76" r="34" fill="${fg}" opacity="0.22"/>
+                <path d="M40 185c0-33 27-55 60-55s60 22 60 55" fill="${fg}" opacity="0.22"/>
+                <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="${fg}" font-family="sans-serif" font-size="28" font-weight="800">${name.slice(0, 2)}</text>
+            </svg>`;
+            return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+        }
+
+        const DEFAULT_PHOTOS = [
+            { id: 1, title: 'Aponjon Mess Building', url: createSvgCard('#4f46e5', '#312e81', 'Aponjon Student Mess', 'Our Peaceful Study & Living Home') },
+            { id: 2, title: 'Sunday Special Feast', url: createSvgCard('#059669', '#064e3b', 'Sunday Chicken & Kochuri', 'Homely Bengali Cooking Together') },
+            { id: 3, title: 'Late Night Study & Adda', url: createSvgCard('#d97706', '#78350f', 'Study & Tea Sessions', 'Brotherhood & Exam Prep') },
+            { id: 4, title: 'Mess Brotherhood', url: createSvgCard('#0284c7', '#1e3a8a', '6 Boarders, 1 Family', 'Sutap • Juboraj • Arijit • Pulak • Subhadip • Sagar') }
+        ];
+
+        const DEFAULT_PROFILES = [
+            {
+                name: 'SUTAP',
+                role: 'Mess Manager & B.Tech CSE',
+                bio: 'Keeps the mess accounts crystal clear and loves organizing Sunday cricket matches.',
+                whatsapp: '919876543210',
+                gpay: 'sutap.mess@okaxis',
+                insta: '@sutap_dev',
+                fb: 'sutap.mondal',
+                photo: createAvatarSvg('#e0e7ff', '#4338ca', 'SUTAP')
+            },
+            {
+                name: 'JUBORAJ',
+                role: 'Bazar Coordinator & B.Sc Physics',
+                bio: 'Expert at bargaining for the freshest Rui fish and seasonal vegetables in the morning market.',
+                whatsapp: '919876543211',
+                gpay: 'juboraj.roy@okicici',
+                insta: '@juboraj_roy',
+                fb: 'juboraj.roy.official',
+                photo: createAvatarSvg('#d1fae5', '#047857', 'JUBORAJ')
+            },
+            {
+                name: 'ARIJIT',
+                role: 'Menu Planner & B.Com Hons',
+                bio: 'Foodie at heart, night-owl coder, and the official DJ during evening tea sessions.',
+                whatsapp: '919876543212',
+                gpay: 'arijit.sen@oksbi',
+                insta: '@arijit_sen',
+                fb: 'arijit.sen.99',
+                photo: createAvatarSvg('#fef3c7', '#b45309', 'ARIJIT')
+            },
+            {
+                name: 'PULAK',
+                role: 'Discipline & Study Coordinator',
+                bio: 'Ensures peaceful study hours and keeps mess schedules running smoothly.',
+                whatsapp: '919876543213',
+                gpay: 'pulak.das@okhdfcbank',
+                insta: '@pulak_das',
+                fb: 'pulak.das.student',
+                photo: createAvatarSvg('#e0f2fe', '#0369a1', 'PULAK')
+            },
+            {
+                name: 'SUBHADIP',
+                role: 'Utility & Maintenance Lead',
+                bio: 'Always ready to help anyone in need; handles gas cylinder booking and electricity bills.',
+                whatsapp: '919876543214',
+                gpay: 'subhadip.pal@okaxis',
+                insta: '@subhadip_pal',
+                fb: 'subhadip.pal.wb',
+                photo: createAvatarSvg('#f3e8ff', '#7e22ce', 'SUBHADIP')
+            },
+            {
+                name: 'SAGAR',
+                role: 'Sports & Cultural Secretary',
+                bio: 'Brings positive energy to the mess with guitar tunes, photography, and morning workouts.',
+                whatsapp: '919876543215',
+                gpay: 'sagar.ghosh@oksbi',
+                insta: '@sagar_ghosh',
+                fb: 'sagar.ghosh.clicks',
+                photo: createAvatarSvg('#ffe4e6', '#be123c', 'SAGAR')
+            }
+        ];
+
+        const DEFAULT_BILLS_RENT = {
+            selectedMonth: '2026-11',
+            roomRentPerHead: 1500,
+            depositPerHead: 3000,
+            months: {
+                '2026-10': {
+                    prevUnit: 1150,
+                    presUnit: 1240,
+                    roomRentPerHead: 1500,
+                    status: {
+                        SUTAP: { current: true, rent: true },
+                        JUBORAJ: { current: true, rent: true },
+                        ARIJIT: { current: true, rent: true },
+                        PULAK: { current: true, rent: true },
+                        SUBHADIP: { current: true, rent: true },
+                        SAGAR: { current: true, rent: true }
+                    }
+                },
+                '2026-11': {
+                    prevUnit: 1240,
+                    presUnit: 1330,
+                    roomRentPerHead: 1500,
+                    status: {
+                        SUTAP: { current: true, rent: true },
+                        JUBORAJ: { current: true, rent: true },
+                        ARIJIT: { current: false, rent: true },
+                        PULAK: { current: true, rent: false },
+                        SUBHADIP: { current: false, rent: false },
+                        SAGAR: { current: true, rent: true }
+                    }
+                }
+            },
+            depositStatus: {
+                SUTAP: true,
+                JUBORAJ: true,
+                ARIJIT: true,
+                PULAK: true,
+                SUBHADIP: true,
+                SAGAR: false
+            }
+        };
+
+        const DEFAULT_TRANSACTIONS = [
+            { id: 101, date: '2026-11-01', name: 'SUTAP', income: 2500, expense: 0, cause: 'Monthly Mess Fund Deposit' },
+            { id: 102, date: '2026-11-01', name: 'JUBORAJ', income: 2500, expense: 0, cause: 'Monthly Mess Fund Deposit' },
+            { id: 103, date: '2026-11-02', name: 'ARIJIT', income: 2500, expense: 0, cause: 'Monthly Mess Fund Deposit' },
+            { id: 104, date: '2026-11-02', name: 'PULAK', income: 2500, expense: 0, cause: 'Monthly Mess Fund Deposit' },
+            { id: 105, date: '2026-11-03', name: 'SUBHADIP', income: 2500, expense: 0, cause: 'Monthly Mess Fund Deposit' },
+            { id: 106, date: '2026-11-03', name: 'SAGAR', income: 2500, expense: 0, cause: 'Monthly Mess Fund Deposit' },
+            { id: 107, date: '2026-11-05', name: 'JUBORAJ', income: 0, expense: 1450, cause: 'Rice Sack (25kg) & Masoor Dal' },
+            { id: 108, date: '2026-11-10', name: 'SUBHADIP', income: 0, expense: 920, cause: 'LPG Cooking Gas Cylinder Refill' },
+            { id: 109, date: '2026-11-16', name: 'SUTAP', income: 0, expense: 780, cause: 'Sunday Chicken, Potato & Spices Bazar' }
+        ];
+
+        // Exact 7-Day Working Routine
+        const DEFAULT_WORK_ROUTINE = [
+            { day: 'SUNDAY', mCut: 'ARIJIT', mCook: 'JUBARAJ', mClean: 'SAGAR', nCut: 'PULAK', nCook: 'SUBHADIP', nClean: 'JUBARAJ', water: 'SAGAR', market: '***' },
+            { day: 'MONDAY', mCut: 'PULAK', mCook: 'SUBHADIP', mClean: 'SAGAR', nCut: 'ARIJIT', nCook: 'SUTAP', nClean: 'SUBHADIP', water: 'ARIJIT', market: '***' },
+            { day: 'TUESDAY', mCut: 'SUBHADIP', mCook: 'SUTAP', mClean: 'ARIJIT', nCut: 'SAGAR', nCook: 'JUBARAJ', nClean: 'SUTAP', water: 'PULAK', market: 'SAG+ARI+JUB' },
+            { day: 'WEDNESDAY', mCut: 'SAGAR', mCook: 'ARIJIT', mClean: 'SUBHADIP', nCut: 'JUBARAJ', nCook: 'SUTAP', nClean: 'PULAK', water: 'SUBHADIP', market: '***' },
+            { day: 'THURSDAY', mCut: 'SUTAP', mCook: 'PULAK', mClean: 'JUBARAJ', nCut: 'SAGAR', nCook: 'ARIJIT', nClean: 'SUTAP', water: 'SAGAR', market: '***' },
+            { day: 'FRIDAY', mCut: 'SUBHADIP', mCook: 'JUBARAJ', mClean: 'ARIJIT', nCut: 'SUTAP', nCook: 'SAGAR', nClean: 'PULAK', water: 'JUBARAJ', market: '***' },
+            { day: 'SATURDAY', mCut: 'JUBARAJ', mCook: 'SAGAR', mClean: 'PULAK', nCut: 'ARIJIT', nCook: 'PULAK', nClean: 'SUBHADIP', water: 'PULAK', market: 'PUL+SUB+JUB' }
+        ];
+
+        // Exact Sunday-Saturday Lunch & Dinner Routine (Bengali + English)
+        const DEFAULT_MEALS = [
+            { dayBn: 'রবি', dayEn: 'Sunday', morning: 'কচুরি (সকালে) / Kochuri', lunch: 'Chicken - ভাত (Chicken & Rice)', dinner: 'ডাল - ভাত (Dal & Rice)' },
+            { dayBn: 'সোম', dayEn: 'Monday', morning: '—', lunch: 'সয়াবিন - ভাত (Soybean & Rice)', dinner: 'সবজি - ভাত (Sabji & Rice)' },
+            { dayBn: 'মঙ্গল', dayEn: 'Tuesday', morning: '—', lunch: 'ডাল - ভাত (Dal & Rice)', dinner: 'ডিম - ভাত (Egg & Rice)' },
+            { dayBn: 'বুধ', dayEn: 'Wednesday', morning: '—', lunch: 'সয়াবিন - ভাত (Soybean & Rice)', dinner: 'মাছ - ভাত (Fish & Rice)' },
+            { dayBn: 'বৃহস্পতি', dayEn: 'Thursday', morning: '—', lunch: 'সবজি - ভাত (Sabji & Rice)', dinner: 'সয়াবিন - ভাত (Soybean & Rice)' },
+            { dayBn: 'শুক্র', dayEn: 'Friday', morning: '—', lunch: 'ডিম - ভাত (Egg & Rice)', dinner: 'সবজি - ভাত (Sabji & Rice)' },
+            { dayBn: 'শনি', dayEn: 'Saturday', morning: '—', lunch: 'ডিম - ভাত (Egg & Rice)', dinner: 'সয়াবিন - ভাত (Soybean & Rice)' }
+        ];
+
+        let messPassword = localStorage.getItem(STORAGE_KEYS.PASSWORD) || 'mess1234';
+        let transactions = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRANSACTIONS)) || [...DEFAULT_TRANSACTIONS];
+        let workRoutine = JSON.parse(localStorage.getItem(STORAGE_KEYS.WORK_ROUTINE)) || [...DEFAULT_WORK_ROUTINE];
+        let meals = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEALS)) || [...DEFAULT_MEALS];
+        let photos = JSON.parse(localStorage.getItem(STORAGE_KEYS.PHOTOS)) || [...DEFAULT_PHOTOS];
+        let profiles = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROFILES)) || [...DEFAULT_PROFILES];
+        let billsRentData = JSON.parse(localStorage.getItem(STORAGE_KEYS.BILLS_RENT)) || JSON.parse(JSON.stringify(DEFAULT_BILLS_RENT));
+        let isEditingMenu = false;
+        let isEditingWork = false;
+
+        // Normalize older saved billsRentData structure to monthly hisab format
+        function ensureMonthlyBillsStructure() {
+            if (!billsRentData.months) {
+                const fallbackMonth = billsRentData.selectedMonth || '2026-11';
+                const statusMap = {};
+                const depMap = {};
+                MEMBERS.forEach(m => {
+                    const st = (billsRentData.status && billsRentData.status[m]) || {};
+                    statusMap[m] = {
+                        current: Boolean(st.current),
+                        rent: Boolean(st.rent)
+                    };
+                    depMap[m] = Boolean(st.deposit);
+                });
+                billsRentData = {
+                    selectedMonth: fallbackMonth,
+                    roomRentPerHead: Number(billsRentData.roomRentPerHead) || 1500,
+                    depositPerHead: Number(billsRentData.depositPerHead) || 3000,
+                    months: {
+                        [fallbackMonth]: {
+                            prevUnit: Number(billsRentData.prevUnit) || 0,
+                            presUnit: Number(billsRentData.presUnit) || 0,
+                            roomRentPerHead: Number(billsRentData.roomRentPerHead) || 1500,
+                            status: statusMap
+                        }
+                    },
+                    depositStatus: depMap
+                };
+            }
+            if (!billsRentData.selectedMonth) {
+                billsRentData.selectedMonth = '2026-11';
+            }
+            if (!billsRentData.depositStatus) {
+                billsRentData.depositStatus = {};
+                MEMBERS.forEach(m => { billsRentData.depositStatus[m] = false; });
+            }
+        }
+
+        function getActiveMonthKey() {
+            ensureMonthlyBillsStructure();
+            return billsRentData.selectedMonth;
+        }
+
+        function getMonthRecord(monthKey, createIfMissing = true) {
+            ensureMonthlyBillsStructure();
+            if (!billsRentData.months[monthKey] && createIfMissing) {
+                const sortedKeys = Object.keys(billsRentData.months).sort();
+                const latestKey = sortedKeys[sortedKeys.length - 1];
+                const carryUnit = latestKey ? (Number(billsRentData.months[latestKey].presUnit) || 0) : 0;
+                const carryRent = latestKey ? (Number(billsRentData.months[latestKey].roomRentPerHead) || billsRentData.roomRentPerHead || 1500) : (billsRentData.roomRentPerHead || 1500);
+
+                const freshStatus = {};
+                MEMBERS.forEach(m => {
+                    freshStatus[m] = { current: false, rent: false };
+                });
+
+                billsRentData.months[monthKey] = {
+                    prevUnit: carryUnit,
+                    presUnit: carryUnit,
+                    roomRentPerHead: carryRent,
+                    status: freshStatus
+                };
+            }
+            if (billsRentData.months[monthKey]) {
+                if (!billsRentData.months[monthKey].status) {
+                    billsRentData.months[monthKey].status = {};
+                }
+                MEMBERS.forEach(m => {
+                    if (!billsRentData.months[monthKey].status[m]) {
+                        billsRentData.months[monthKey].status[m] = { current: false, rent: false };
+                    }
+                });
+            }
+            return billsRentData.months[monthKey];
+        }
+
+        function saveBillsRentData() {
+            localStorage.setItem(STORAGE_KEYS.BILLS_RENT, JSON.stringify(billsRentData));
+        }
+
+        /* TOAST UTILITY */
+        let toastTimer;
+        function showToast(title, message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const iconWrap = document.getElementById('toast-icon-wrap');
+            document.getElementById('toast-title').textContent = title;
+            document.getElementById('toast-message').textContent = message;
+            iconWrap.className = 'toast-icon-wrap ' + type;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(hideToast, 3800);
+        }
+        function hideToast() {
+            document.getElementById('toast').classList.remove('show');
+        }
+
+        /* 1. LOGIN & AUTHENTICATION */
+        const loginScreen = document.getElementById('login-screen');
+        const portalApp = document.getElementById('portal-app');
+        const messLoginForm = document.getElementById('mess-login-form');
+        const messPasswordInput = document.getElementById('mess-password');
+        const loginError = document.getElementById('login-error');
+        const hintPasswordDisplay = document.getElementById('hint-password-display');
+
+        hintPasswordDisplay.textContent = messPassword;
+
+        document.getElementById('toggle-login-pass').addEventListener('click', () => {
+            messPasswordInput.type = messPasswordInput.type === 'password' ? 'text' : 'password';
+        });
+
+        document.getElementById('autofill-login-btn').addEventListener('click', () => {
+            messPasswordInput.value = messPassword;
+            loginError.classList.add('hidden');
+        });
+
+        messLoginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const enteredPass = messPasswordInput.value.trim();
+            const selectedMember = document.getElementById('login-member').value;
+            if (enteredPass === messPassword) {
+                loginError.classList.add('hidden');
+                document.getElementById('active-member-badge').textContent = selectedMember;
+                document.getElementById('fund-name').value = selectedMember;
+                loginScreen.classList.add('hidden');
+                portalApp.classList.remove('hidden');
+                showToast(`Welcome, ${selectedMember}!`, 'Aponjon Student Mess portal unlocked.', 'success');
+            } else {
+                loginError.classList.remove('hidden');
+                messPasswordInput.focus();
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            messPasswordInput.value = '';
+            portalApp.classList.add('hidden');
+            loginScreen.classList.remove('hidden');
+            showToast('Portal Locked', 'You have logged out of the mess portal.', 'info');
+        });
+
+        /* CHANGE PASSWORD MODAL */
+        const passModal = document.getElementById('pass-modal');
+        document.getElementById('open-pass-modal-btn').addEventListener('click', () => {
+            document.getElementById('new-mess-password').value = '';
+            passModal.classList.remove('hidden');
+        });
+        document.getElementById('close-pass-modal').addEventListener('click', () => passModal.classList.add('hidden'));
+        document.getElementById('cancel-pass-modal').addEventListener('click', () => passModal.classList.add('hidden'));
+
+        document.getElementById('change-pass-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newPass = document.getElementById('new-mess-password').value.trim();
+            if (newPass.length < 4) {
+                showToast('Invalid Password', 'Password must be at least 4 characters.', 'error');
+                return;
+            }
+            messPassword = newPass;
+            localStorage.setItem(STORAGE_KEYS.PASSWORD, messPassword);
+            hintPasswordDisplay.textContent = messPassword;
+            passModal.classList.add('hidden');
+            showToast('Password Updated', 'New mess password saved successfully.', 'success');
+        });
+
+        /* 2. MESS PHOTO GALLERY */
+        function renderGallery() {
+            const grid = document.getElementById('mess-photo-grid');
+            grid.innerHTML = photos.map((photo, idx) => `
+                <div class="photo-card">
+                    <img src="${photo.url}" alt="${photo.title}">
+                    <div class="photo-caption">
+                        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${photo.title}</span>
+                        ${photos.length > 1 ? `<button type="button" onclick="deletePhoto(${idx})" title="Remove photo" class="photo-del-btn">✕</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.deletePhoto = function (idx) {
+            photos.splice(idx, 1);
+            localStorage.setItem(STORAGE_KEYS.PHOTOS, JSON.stringify(photos));
+            renderGallery();
+            showToast('Photo Removed', 'Gallery updated.', 'info');
+        };
+
+        document.getElementById('gallery-upload-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                photos.unshift({
+                    id: Date.now(),
+                    title: file.name.replace(/\.[^/.]+$/, '').slice(0, 26) || 'Mess Memory',
+                    url: event.target.result
+                });
+                if (photos.length > 6) photos.pop();
+                try {
+                    localStorage.setItem(STORAGE_KEYS.PHOTOS, JSON.stringify(photos));
+                } catch (err) { }
+                renderGallery();
+                showToast('Photo Added', 'New photo added to the mess gallery!', 'success');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        /* 3. FUNDING & EXPENSE SYSTEM */
+        const fundDateInput = document.getElementById('fund-date');
+        const fundNameSelect = document.getElementById('fund-name');
+        const fundIncomeInput = document.getElementById('fund-income');
+        const fundExpenseInput = document.getElementById('fund-expense');
+        const fundCauseInput = document.getElementById('fund-cause');
+        const liveSavingsPreview = document.getElementById('live-savings-preview');
+        const filterMemberSelect = document.getElementById('filter-member');
+        const causeRequirementBadge = document.getElementById('cause-requirement-badge');
+
+        function setTodayDate() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            fundDateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+
+        function updateCauseRequirementUI() {
+            const inc = parseInt(fundIncomeInput.value || '0', 10) || 0;
+            const exp = parseInt(fundExpenseInput.value || '0', 10) || 0;
+            if (exp > 0) {
+                causeRequirementBadge.textContent = 'Required for Expense';
+                causeRequirementBadge.style.color = 'var(--rose-600)';
+                fundCauseInput.placeholder = 'e.g., Fish & Veg Bazar / Gas Cylinder';
+            } else {
+                causeRequirementBadge.textContent = inc > 0 ? 'Optional (Auto-fills Deposit)' : 'Optional for Income';
+                causeRequirementBadge.style.color = 'var(--emerald-600)';
+                fundCauseInput.placeholder = 'Optional for deposit; required for expense';
+            }
+        }
+
+        document.querySelectorAll('.digit-only-input').forEach(input => {
+            input.addEventListener('input', () => {
+                input.value = input.value.replace(/[^0-9]/g, '');
+                updateLiveSavingsPreview();
+                updateCauseRequirementUI();
+            });
+            input.addEventListener('focus', () => {
+                if (input.value === '0') input.value = '';
+            });
+            input.addEventListener('blur', () => {
+                if (input.value === '') input.value = '0';
+                updateLiveSavingsPreview();
+                updateCauseRequirementUI();
+            });
+        });
+
+        function getCurrentTotalSavings() {
+            return transactions.reduce((acc, tx) => acc + Number(tx.income) - Number(tx.expense), 0);
+        }
+
+        function updateLiveSavingsPreview() {
+            const prevSavings = getCurrentTotalSavings();
+            const inc = parseInt(fundIncomeInput.value || '0', 10) || 0;
+            const exp = parseInt(fundExpenseInput.value || '0', 10) || 0;
+            const newSavings = prevSavings + inc - exp;
+            liveSavingsPreview.textContent = `₹${newSavings.toLocaleString('en-IN')}`;
+            liveSavingsPreview.style.color = newSavings < 0 ? 'var(--rose-600)' : 'var(--brand-700)';
+        }
+
+        function renderFundingSystem() {
+            let totalIncome = 0;
+            let totalExpense = 0;
+            let runningSavings = 0;
+
+            const memberTotals = {};
+            MEMBERS.forEach(m => memberTotals[m] = 0);
+
+            const enrichedTransactions = transactions.map(tx => {
+                const inc = Number(tx.income) || 0;
+                const exp = Number(tx.expense) || 0;
+                totalIncome += inc;
+                totalExpense += exp;
+                runningSavings = runningSavings + inc - exp;
+                if (memberTotals[tx.name] !== undefined) {
+                    memberTotals[tx.name] += inc;
+                }
+                return { ...tx, runningSavings };
+            });
+
+            document.getElementById('kpi-total-income').textContent = `₹${totalIncome.toLocaleString('en-IN')}`;
+            document.getElementById('kpi-total-expense').textContent = `₹${totalExpense.toLocaleString('en-IN')}`;
+            document.getElementById('kpi-current-savings').textContent = `₹${runningSavings.toLocaleString('en-IN')}`;
+
+            document.getElementById('member-contribution-grid').innerHTML = MEMBERS.map(member => `
+                <div class="member-mini-box">
+                    <span class="member-mini-name">${member}</span>
+                    <span class="member-mini-amt">₹${memberTotals[member].toLocaleString('en-IN')}</span>
+                </div>
+            `).join('');
+
+            const selectedFilter = filterMemberSelect.value;
+            const visibleRows = selectedFilter === 'ALL'
+                ? enrichedTransactions
+                : enrichedTransactions.filter(tx => tx.name === selectedFilter);
+
+            const tbody = document.getElementById('ledger-table-body');
+            if (visibleRows.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding:2rem;color:var(--text-muted);">No transactions recorded for this filter yet.</td></tr>`;
+            } else {
+                tbody.innerHTML = [...visibleRows].reverse().map(tx => `
+                    <tr>
+                        <td class="nowrap" style="color:var(--text-secondary);font-size:0.78rem;">${tx.date}</td>
+                        <td class="nowrap"><span class="badge-name">${tx.name}</span></td>
+                        <td class="nowrap text-right amt-inc">${tx.income > 0 ? `+₹${tx.income.toLocaleString('en-IN')}` : '—'}</td>
+                        <td class="nowrap text-right amt-exp">${tx.expense > 0 ? `-₹${tx.expense.toLocaleString('en-IN')}` : '—'}</td>
+                        <td style="font-size:0.8rem;">${tx.cause}</td>
+                        <td class="nowrap text-right amt-sav ${tx.runningSavings < 0 ? 'amt-neg' : ''}">₹${tx.runningSavings.toLocaleString('en-IN')}</td>
+                        <td class="text-center">
+                            <button type="button" onclick="deleteTransaction(${tx.id})" title="Delete entry" class="btn btn-soft-danger" style="padding:0.3rem 0.5rem;">✕</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            updateLiveSavingsPreview();
+        }
+
+        document.getElementById('fund-entry-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const dateVal = fundDateInput.value;
+            const nameVal = fundNameSelect.value;
+            const incomeVal = parseInt(fundIncomeInput.value || '0', 10) || 0;
+            const expenseVal = parseInt(fundExpenseInput.value || '0', 10) || 0;
+            let causeVal = fundCauseInput.value.trim();
+
+            if (!dateVal) {
+                showToast('Date Required', 'Please select a valid date.', 'error');
+                return;
+            }
+            if (incomeVal === 0 && expenseVal === 0) {
+                showToast('Amount Required', 'Enter either an Income deposit or an Expense amount.', 'error');
+                return;
+            }
+            if (expenseVal > 0 && !causeVal) {
+                showToast('Cause Required', 'Please enter the cause of expense.', 'error');
+                fundCauseInput.focus();
+                return;
+            }
+            if (!causeVal && incomeVal > 0) {
+                causeVal = 'Mess Deposit / Income';
+            }
+
+            transactions.push({
+                id: Date.now(),
+                date: dateVal,
+                name: nameVal,
+                income: incomeVal,
+                expense: expenseVal,
+                cause: causeVal
+            });
+            localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+
+            fundIncomeInput.value = '0';
+            fundExpenseInput.value = '0';
+            fundCauseInput.value = '';
+            setTodayDate();
+            updateCauseRequirementUI();
+            renderFundingSystem();
+            showToast('Entry Recorded!', `Updated savings balance for ${nameVal}.`, 'success');
+        });
+
+        window.deleteTransaction = function (id) {
+            transactions = transactions.filter(tx => tx.id !== id);
+            localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+            renderFundingSystem();
+            showToast('Entry Removed', 'Transaction deleted and savings recalculated.', 'info');
+        };
+
+        filterMemberSelect.addEventListener('change', renderFundingSystem);
+
+        document.getElementById('reset-demo-funds-btn').addEventListener('click', () => {
+            transactions = [...DEFAULT_TRANSACTIONS];
+            localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+            renderFundingSystem();
+            showToast('Sample Data Restored', 'Default mess fund entries have been restored.', 'info');
+        });
+
+        document.getElementById('export-csv-btn').addEventListener('click', () => {
+            let running = 0;
+            const headers = ['Date,Name,Income (INR),Expense (INR),Cause of Expense,Savings (INR)'];
+            const rows = transactions.map(tx => {
+                running = running + Number(tx.income) - Number(tx.expense);
+                const safeCause = `"${String(tx.cause).replace(/"/g, '""')}"`;
+                return `${tx.date},${tx.name},${tx.income},${tx.expense},${safeCause},${running}`;
+            });
+            const csvContent = 'data:text/csv;charset=utf-8,' + [headers, ...rows].join('\n');
+            const link = document.createElement('a');
+            link.setAttribute('href', encodeURI(csvContent));
+            link.setAttribute('download', `Aponjon_Mess_Funds_${fundDateInput.value}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('CSV Exported', 'Mess fund ledger downloaded.', 'success');
+        });
+
+        /* 4. CURRENT BILL CALCULATOR, ROOM RENT & DEPOSIT TRACKER */
+        const billingMonthSelect = document.getElementById('billing-month-select');
+        const prevUnitInput = document.getElementById('prev-unit-input');
+        const presUnitInput = document.getElementById('pres-unit-input');
+        const rentAmountInput = document.getElementById('rent-amount-input');
+        const depositAmountInput = document.getElementById('deposit-amount-input');
+
+        function syncMonthInputsFromStorage() {
+            const monthKey = getActiveMonthKey();
+            const rec = getMonthRecord(monthKey, true);
+            billingMonthSelect.value = monthKey;
+            prevUnitInput.value = rec.prevUnit ?? 0;
+            presUnitInput.value = rec.presUnit ?? 0;
+            rentAmountInput.value = rec.roomRentPerHead ?? billsRentData.roomRentPerHead ?? 1500;
+            depositAmountInput.value = billsRentData.depositPerHead ?? 3000;
+
+            document.getElementById('active-bill-month-label').textContent = monthKey;
+            document.querySelectorAll('.month-col-tag').forEach(el => {
+                el.textContent = monthKey;
+            });
+        }
+
+        function calculateCurrentBillStats() {
+            const prev = parseFloat(prevUnitInput.value) || 0;
+            const pres = parseFloat(presUnitInput.value) || 0;
+            const totalUnit = Math.max(0, pres - prev);
+            const totalBill = totalUnit * 10;
+            const perHeadBill = totalBill / 6;
+
+            document.getElementById('calc-total-unit').textContent = `${Number(totalUnit.toFixed(2))} Units`;
+            document.getElementById('calc-total-bill').textContent = `₹${totalBill.toFixed(2)}`;
+            document.getElementById('calc-per-head-bill').textContent = `₹${perHeadBill.toFixed(2)}`;
+            document.getElementById('badge-per-head-current').textContent = `₹${perHeadBill.toFixed(2)}`;
+
+            return { prev, pres, totalUnit, totalBill, perHeadBill };
+        }
+
+        function renderPaymentStatusBoard() {
+            const monthKey = getActiveMonthKey();
+            const rec = getMonthRecord(monthKey, true);
+            const { perHeadBill } = calculateCurrentBillStats();
+            const rentAmt = Number(rec.roomRentPerHead) || 0;
+            const depositAmt = Number(billsRentData.depositPerHead) || 0;
+
+            let currentPaidCount = 0;
+            let rentPaidCount = 0;
+            let depositPaidCount = 0;
+
+            const tbody = document.getElementById('payment-status-tbody');
+            tbody.innerHTML = MEMBERS.map(member => {
+                const monthSt = rec.status[member] || { current: false, rent: false };
+                const isDepositPaid = Boolean(billsRentData.depositStatus[member]);
+                if (monthSt.current) currentPaidCount++;
+                if (monthSt.rent) rentPaidCount++;
+                if (isDepositPaid) depositPaidCount++;
+
+                const renderPill = (isPaid, category, amountText) => `
+                    <button type="button" onclick="toggleMemberPaymentStatus('${member}', '${category}')"
+                        class="status-toggle ${isPaid ? 'paid' : 'unpaid'}">
+                        <span>${isPaid ? '✓ Paid' : '✕ Not Paid'}</span>
+                        <small style="opacity:0.8;">(${amountText})</small>
+                    </button>
+                `;
+
+                return `
+                    <tr>
+                        <td class="nowrap" style="font-weight:800;">${member}</td>
+                        <td class="text-center nowrap">${renderPill(Boolean(monthSt.current), 'current', '₹' + Math.round(perHeadBill))}</td>
+                        <td class="text-center nowrap">${renderPill(Boolean(monthSt.rent), 'rent', '₹' + rentAmt)}</td>
+                        <td class="text-center nowrap">${renderPill(isDepositPaid, 'deposit', '₹' + depositAmt)}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('payment-summary-pills').innerHTML = `
+                <span class="summary-pill" style="background:var(--amber-50);color:var(--amber-800);border:1px solid #fde68a;">Current (${monthKey}): ${currentPaidCount}/6 Paid</span>
+                <span class="summary-pill" style="background:var(--brand-50);color:var(--brand-700);border:1px solid var(--brand-100);">Rent (${monthKey}): ${rentPaidCount}/6 Paid</span>
+                <span class="summary-pill" style="background:var(--emerald-50);color:var(--emerald-700);border:1px solid var(--emerald-100);">Deposit: ${depositPaidCount}/6 Paid</span>
+            `;
+        }
+
+        window.toggleMemberPaymentStatus = function (member, category) {
+            const monthKey = getActiveMonthKey();
+            const rec = getMonthRecord(monthKey, true);
+            if (category === 'deposit') {
+                billsRentData.depositStatus[member] = !Boolean(billsRentData.depositStatus[member]);
+            } else {
+                rec.status[member][category] = !Boolean(rec.status[member][category]);
+            }
+            saveBillsRentData();
+            renderPaymentStatusBoard();
+        };
+
+        billingMonthSelect.addEventListener('change', () => {
+            const chosen = billingMonthSelect.value;
+            if (!chosen) return;
+            billsRentData.selectedMonth = chosen;
+            getMonthRecord(chosen, true);
+            saveBillsRentData();
+            syncMonthInputsFromStorage();
+            renderPaymentStatusBoard();
+            showToast('Month Switched', `Showing Current Bill & Room Rent hisab for ${chosen}.`, 'info');
+        });
+
+        prevUnitInput.addEventListener('input', () => {
+            const rec = getMonthRecord(getActiveMonthKey(), true);
+            rec.prevUnit = parseFloat(prevUnitInput.value) || 0;
+            saveBillsRentData();
+            renderPaymentStatusBoard();
+        });
+
+        presUnitInput.addEventListener('input', () => {
+            const rec = getMonthRecord(getActiveMonthKey(), true);
+            rec.presUnit = parseFloat(presUnitInput.value) || 0;
+            saveBillsRentData();
+            renderPaymentStatusBoard();
+        });
+
+        document.getElementById('save-meter-reading-btn').addEventListener('click', () => {
+            const monthKey = getActiveMonthKey();
+            const rec = getMonthRecord(monthKey, true);
+            const prev = parseFloat(prevUnitInput.value) || 0;
+            const pres = parseFloat(presUnitInput.value) || 0;
+            if (pres < prev) {
+                showToast('Check Units', 'Present Unit should be greater than or equal to Previous Unit.', 'error');
+                return;
+            }
+            rec.prevUnit = prev;
+            rec.presUnit = pres;
+            saveBillsRentData();
+            renderPaymentStatusBoard();
+            showToast('Monthly Meter Saved', `Saved ${monthKey} meter reading & split across 6 members.`, 'success');
+        });
+
+        document.getElementById('rollover-meter-btn').addEventListener('click', () => {
+            const currentKey = getActiveMonthKey();
+            const rec = getMonthRecord(currentKey, true);
+            const pres = parseFloat(presUnitInput.value) || 0;
+            rec.presUnit = pres;
+
+            const [yStr, mStr] = currentKey.split('-');
+            const nextDate = new Date(Number(yStr), Number(mStr), 1);
+            const nextKey = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}`;
+
+            billsRentData.selectedMonth = nextKey;
+            const nextRec = getMonthRecord(nextKey, true);
+            nextRec.prevUnit = pres;
+            nextRec.presUnit = pres;
+            nextRec.roomRentPerHead = rec.roomRentPerHead;
+            MEMBERS.forEach(m => {
+                nextRec.status[m] = { current: false, rent: false };
+            });
+
+            saveBillsRentData();
+            syncMonthInputsFromStorage();
+            renderPaymentStatusBoard();
+            showToast('Next Month Created', `Switched to ${nextKey} with Previous Unit set to ${pres}.`, 'info');
+        });
+
+        rentAmountInput.addEventListener('input', () => {
+            const monthKey = getActiveMonthKey();
+            const rec = getMonthRecord(monthKey, true);
+            const amt = Math.max(0, parseInt(rentAmountInput.value || '0', 10) || 0);
+            rec.roomRentPerHead = amt;
+            billsRentData.roomRentPerHead = amt;
+            saveBillsRentData();
+            renderPaymentStatusBoard();
+        });
+
+        depositAmountInput.addEventListener('input', () => {
+            billsRentData.depositPerHead = Math.max(0, parseInt(depositAmountInput.value || '0', 10) || 0);
+            saveBillsRentData();
+            renderPaymentStatusBoard();
+        });
+
+        /* 5. 7-DAY WORK ROUTINE */
+        const highlightWorkMemberSelect = document.getElementById('highlight-work-member');
+
+        function renderWorkRoutine() {
+            const tbody = document.getElementById('work-routine-tbody');
+            const highlightName = highlightWorkMemberSelect.value;
+
+            function cellClass(value, baseClass = '') {
+                if (isEditingWork || highlightName === 'NONE') return baseClass;
+                const upper = String(value).toUpperCase();
+                const shortCode = highlightName.slice(0, 3);
+                const isMatch = upper.includes(highlightName) || (upper.includes('+') && upper.includes(shortCode));
+                return `${baseClass} ${isMatch ? 'duty-highlight' : 'duty-dimmed'}`;
+            }
+
+            tbody.innerHTML = workRoutine.map((row, idx) => {
+                const renderField = (field, val, extraClass = '') => {
+                    if (isEditingWork) {
+                        return `<td class="${extraClass}"><input type="text" data-idx="${idx}" data-field="${field}" value="${val}" class="work-edit-input"></td>`;
+                    }
+                    return `<td class="${cellClass(val, extraClass)}">${val}</td>`;
+                };
+
+                return `
+                    <tr>
+                        <td class="work-day-cell">${row.day}</td>
+                        ${renderField('mCut', row.mCut)}
+                        ${renderField('mCook', row.mCook, 'work-cook-cell')}
+                        ${renderField('mClean', row.mClean)}
+                        ${renderField('nCut', row.nCut)}
+                        ${renderField('nCook', row.nCook, 'work-cook-cell')}
+                        ${renderField('nClean', row.nClean)}
+                        ${renderField('water', row.water)}
+                        ${renderField('market', row.market, row.market !== '***' ? 'work-market-active' : '')}
+                        ${idx === 0 ? `
+                            <td rowspan="7" class="work-pump-cell">
+                                SUTAP &lt;<br>
+                                JUBARAJ &lt;<br>
+                                SAGAR &lt;<br>
+                                PULAK &lt;<br>
+                                SUBHADIP &lt;<br>
+                                ARIJIT
+                            </td>
+                        ` : ''}
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        highlightWorkMemberSelect.addEventListener('change', renderWorkRoutine);
+
+        document.getElementById('toggle-edit-work-btn').addEventListener('click', () => {
+            if (isEditingWork) {
+                document.querySelectorAll('.work-edit-input').forEach(input => {
+                    const idx = Number(input.dataset.idx);
+                    const field = input.dataset.field;
+                    workRoutine[idx][field] = input.value.trim().toUpperCase() || workRoutine[idx][field];
+                });
+                localStorage.setItem(STORAGE_KEYS.WORK_ROUTINE, JSON.stringify(workRoutine));
+                isEditingWork = false;
+                document.getElementById('edit-work-btn-text').textContent = 'Edit Work Routine';
+                showToast('Work Routine Saved', 'Weekly duties have been updated.', 'success');
+            } else {
+                isEditingWork = true;
+                document.getElementById('edit-work-btn-text').textContent = 'Save Work Routine';
+            }
+            renderWorkRoutine();
+        });
+
+        /* 6. WEEKLY MEAL ROUTINE (SUNDAY – SATURDAY) */
+        function renderMealRoutine() {
+            const tbody = document.getElementById('meal-table-body');
+            tbody.innerHTML = meals.map((item, idx) => `
+                <tr>
+                    <td class="nowrap">
+                        <span class="meal-day-bn">${item.dayBn}</span>
+                        <span class="meal-day-en">${item.dayEn}</span>
+                    </td>
+                    <td>
+                        ${isEditingMenu
+                    ? `<input type="text" data-idx="${idx}" data-meal="morning" value="${item.morning}" class="meal-edit-input form-control" style="padding:0.4rem 0.6rem;font-size:0.8rem;">`
+                    : (item.morning && item.morning !== '—' ? `<span class="morning-special-tag">${item.morning}</span>` : '<span style="color:var(--text-muted);">—</span>')}
+                    </td>
+                    <td>
+                        ${isEditingMenu
+                    ? `<input type="text" data-idx="${idx}" data-meal="lunch" value="${item.lunch}" class="meal-edit-input form-control" style="padding:0.4rem 0.6rem;font-size:0.8rem;">`
+                    : `<strong>${item.lunch}</strong>`}
+                    </td>
+                    <td>
+                        ${isEditingMenu
+                    ? `<input type="text" data-idx="${idx}" data-meal="dinner" value="${item.dinner}" class="meal-edit-input form-control" style="padding:0.4rem 0.6rem;font-size:0.8rem;">`
+                    : `<strong>${item.dinner}</strong>`}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('toggle-edit-menu-btn').addEventListener('click', () => {
+            if (isEditingMenu) {
+                document.querySelectorAll('.meal-edit-input').forEach(input => {
+                    const idx = Number(input.dataset.idx);
+                    const type = input.dataset.meal;
+                    meals[idx][type] = input.value.trim() || meals[idx][type];
+                });
+                localStorage.setItem(STORAGE_KEYS.MEALS, JSON.stringify(meals));
+                isEditingMenu = false;
+                document.getElementById('edit-menu-btn-text').textContent = 'Edit Menu';
+                showToast('Menu Saved', 'Weekly Lunch & Dinner routine updated.', 'success');
+            } else {
+                isEditingMenu = true;
+                document.getElementById('edit-menu-btn-text').textContent = 'Save Menu';
+            }
+            renderMealRoutine();
+        });
+
+        /* 7. 6 BOARDERS' PROFILES (WITH GPAY COPY & EDIT) */
+        function renderProfiles() {
+            const grid = document.getElementById('profiles-grid');
+            grid.innerHTML = profiles.map((person, index) => `
+                <article class="profile-card">
+                    <div>
+                        <div class="profile-top">
+                            <div class="avatar-box">
+                                <img src="${person.photo}" alt="${person.name}">
+                                <label title="Change Photo" class="avatar-cam-btn">
+                                    <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                    <input type="file" accept="image/*" onchange="updateProfilePhoto(${index}, event)" class="hidden">
+                                </label>
+                            </div>
+                            <div>
+                                <span class="boarder-tag">Boarder #0${index + 1}</span>
+                                <h3 class="profile-name">${person.name}</h3>
+                                <p class="profile-role">${person.role}</p>
+                            </div>
+                        </div>
+                        <p class="profile-bio">"${person.bio}"</p>
+                    </div>
+
+                    <div class="profile-links">
+                        <a href="https://wa.me/${person.whatsapp}" target="_blank" rel="noopener noreferrer" class="contact-row wa">
+                            <span>WhatsApp</span>
+                            <span style="font-family:var(--font-mono);">+${person.whatsapp}</span>
+                        </a>
+
+                        <div class="contact-row gpay">
+                            <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                <span class="gpay-badge">GPay</span>
+                                <span style="font-family:var(--font-mono);">${person.gpay || 'Not Set'}</span>
+                            </div>
+                            <div class="gpay-actions">
+                                <button type="button" onclick="copyGpayId('${person.gpay || ''}', '${person.name}')" title="Copy GPay ID" class="icon-chip-btn">Copy</button>
+                                <button type="button" onclick="openGpayModal(${index})" title="Edit Profile" class="icon-chip-btn">Edit</button>
+                            </div>
+                        </div>
+
+                        <div class="social-pair">
+                            <a href="https://instagram.com/${person.insta.replace('@', '')}" target="_blank" rel="noopener noreferrer" class="social-chip ig">
+                                <span>IG: ${person.insta}</span>
+                            </a>
+                            <a href="https://facebook.com/${person.fb}" target="_blank" rel="noopener noreferrer" class="social-chip fb">
+                                <span>FB: ${person.fb}</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        window.copyGpayId = function (gpayText, memberName) {
+            if (!gpayText) {
+                showToast('No GPay ID', `Click Edit to add ${memberName}'s GPay ID.`, 'info');
+                return;
+            }
+            const tempInput = document.createElement('input');
+            tempInput.value = gpayText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast('GPay Copied!', `Copied ${memberName}'s GPay (${gpayText}) to clipboard.`, 'success');
+        };
+
+        const gpayModal = document.getElementById('gpay-modal');
+        window.openGpayModal = function (index) {
+            document.getElementById('gpay-member-index').value = index;
+            document.getElementById('gpay-modal-subtitle').textContent = `Update details for ${profiles[index].name}.`;
+            document.getElementById('gpay-value-input').value = profiles[index].gpay || '';
+            document.getElementById('profile-wa-input').value = profiles[index].whatsapp || '';
+            document.getElementById('profile-bio-input').value = profiles[index].bio || '';
+            gpayModal.classList.remove('hidden');
+        };
+        document.getElementById('close-gpay-modal').addEventListener('click', () => gpayModal.classList.add('hidden'));
+        document.getElementById('cancel-gpay-modal').addEventListener('click', () => gpayModal.classList.add('hidden'));
+
+        document.getElementById('edit-gpay-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const idx = Number(document.getElementById('gpay-member-index').value);
+            profiles[idx].gpay = document.getElementById('gpay-value-input').value.trim();
+            profiles[idx].whatsapp = document.getElementById('profile-wa-input').value.trim().replace(/[^0-9]/g, '');
+            profiles[idx].bio = document.getElementById('profile-bio-input').value.trim();
+            localStorage.setItem(STORAGE_KEYS.PROFILES, JSON.stringify(profiles));
+            gpayModal.classList.add('hidden');
+            renderProfiles();
+            showToast('Profile Updated', `Saved details for ${profiles[idx].name}.`, 'success');
+        });
+
+        window.updateProfilePhoto = function (index, event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                profiles[index].photo = e.target.result;
+                try {
+                    localStorage.setItem(STORAGE_KEYS.PROFILES, JSON.stringify(profiles));
+                } catch (err) { }
+                renderProfiles();
+                showToast('Photo Updated', `Updated photo for ${profiles[index].name}.`, 'success');
+            };
+            reader.readAsDataURL(file);
+        };
+
+        /* INITIALIZE PORTAL ON LOAD */
+        window.addEventListener('DOMContentLoaded', () => {
+            setTodayDate();
+            updateCauseRequirementUI();
+            syncMonthInputsFromStorage();
+
+            renderGallery();
+            renderFundingSystem();
+            renderPaymentStatusBoard();
+            renderWorkRoutine();
+            renderMealRoutine();
+            renderProfiles();
+        });
+    </script>
+</body>
+
+</html>
